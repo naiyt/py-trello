@@ -129,7 +129,7 @@ class TrelloClient(object):
 			boards.append(self._board_from_json(obj))
 
 		return boards
-	
+
 	def get_board(self, board_id):
 		obj = self.fetch_json('/boards/' + board_id)
 		return self._board_from_json(obj)
@@ -176,6 +176,17 @@ class TrelloClient(object):
 		if response.status != 200:
 			raise ResourceUnavailable(url, response)
 		return json.loads(content)
+
+	def list_orgs(self):
+		json_obj = self.fetch_json(
+					'/members/me/organizations/all')
+		orgs = [self._org_from_json(x) for x in json_obj]
+		return orgs
+
+	def _org_from_json(self, json):
+		# TODO - parse org info here
+		org = Org(info)
+		return org
 
 	def _board_from_json(self, json):
 		board = Board(self, json['id'], name = json['name'].encode('utf-8'))
@@ -675,6 +686,9 @@ class WebHook(object):
 		self.client.fetch_json(
 				'/webhooks/%s' % self.id,
 				http_method = 'DELETE')
+
+class Org(object):
+	pass
 
 
 # vim:noexpandtab
